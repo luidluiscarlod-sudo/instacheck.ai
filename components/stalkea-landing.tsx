@@ -488,7 +488,10 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
             </div>
 
             <button
-              onClick={() => setShowLocationVipModal(false)}
+              onClick={() => {
+                setShowLocationVipModal(false)
+                window.open("https://pay.mycheckoutt.com/01997889-d90f-7176-b1ad-330b2aadd114?ref=", "_blank")
+              }}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity"
             >
               Become VIP
