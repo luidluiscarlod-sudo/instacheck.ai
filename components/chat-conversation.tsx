@@ -13,6 +13,7 @@ import {
   Pause,
   Volume2,
   VolumeX,
+  AlertTriangle,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 
@@ -31,6 +32,7 @@ interface ReelCardProps {
   isTwitterPost?: boolean
   twitterHandle?: string
   twitterText?: string
+  verified?: boolean
 }
 
 function ReelCard({
@@ -41,62 +43,110 @@ function ReelCard({
   isTwitterPost,
   twitterHandle,
   twitterText,
+  verified,
 }: ReelCardProps) {
+  const [showVipModal, setShowVipModal] = useState(false)
+
+  const handleReelClick = () => {
+    setShowVipModal(true)
+  }
+
+  const handleGetVipAccess = () => {
+    setShowVipModal(false)
+  }
+
   return (
-    <div className="bg-[#262626] rounded-xl overflow-hidden max-w-[280px]">
-      {/* Reel header */}
-      <div className="flex items-center gap-2 px-3 py-2">
-        <div className="w-7 h-7 rounded-full overflow-hidden">
-          <img src={creatorAvatar || "/placeholder.svg"} alt={creatorUsername} className="w-full h-full object-cover" />
+    <>
+      <div className="bg-[#262626] rounded-xl overflow-hidden max-w-[280px] cursor-pointer" onClick={handleReelClick}>
+        {/* Reel header */}
+        <div className="flex items-center gap-2 px-3 py-2">
+          <div className="w-7 h-7 rounded-full overflow-hidden">
+            <img
+              src={creatorAvatar || "/placeholder.svg"}
+              alt={creatorUsername}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <span className="text-white text-sm font-medium">{creatorUsername}</span>
+          {verified && (
+            <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
+            </svg>
+          )}
         </div>
-        <span className="text-white text-sm font-medium">{creatorUsername}</span>
-      </div>
 
-      {/* If Twitter/X post */}
-      {isTwitterPost && (
-        <div className="px-3 pb-2">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-6 h-6 rounded-full overflow-hidden">
-              <img
-                src={creatorAvatar || "/placeholder.svg"}
-                alt={creatorUsername}
-                className="w-full h-full object-cover"
-              />
+        {/* If Twitter/X post */}
+        {isTwitterPost && (
+          <div className="px-3 pb-2">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 rounded-full overflow-hidden">
+                <img
+                  src={creatorAvatar || "/placeholder.svg"}
+                  alt={creatorUsername}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-white text-xs font-semibold">{creatorUsername}</span>
+                <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818-1.79-3.818 4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
+                </svg>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="text-white text-xs font-semibold">{creatorUsername}</span>
-              <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
-              </svg>
+            <span className="text-gray-400 text-xs">@{twitterHandle}</span>
+            <p className="text-white text-sm mt-2">{twitterText}</p>
+          </div>
+        )}
+
+        {/* Video thumbnail */}
+        <div className="relative">
+          <img src={thumbnail || "/placeholder.svg"} alt="Reel" className="w-full aspect-[9/16] object-cover" />
+          {/* Central play button */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+              <Play className="w-7 h-7 text-white fill-white ml-1" />
             </div>
           </div>
-          <span className="text-gray-400 text-xs">@{twitterHandle}</span>
-          <p className="text-white text-sm mt-2">{twitterText}</p>
-        </div>
-      )}
-
-      {/* Video thumbnail */}
-      <div className="relative">
-        <img src={thumbnail || "/placeholder.svg"} alt="Reel" className="w-full aspect-[9/16] object-cover" />
-        {/* Central play button */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-14 h-14 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-            <Play className="w-7 h-7 text-white fill-white ml-1" />
+          {/* Reels icon in corner */}
+          <div className="absolute bottom-3 left-3 bg-black/50 rounded-lg p-1.5">
+            <Play className="w-5 h-5 text-white fill-white" />
           </div>
         </div>
-        {/* Reels icon in corner */}
-        <div className="absolute bottom-3 left-3 bg-black/50 rounded-lg p-1.5">
-          <Play className="w-5 h-5 text-white fill-white" />
-        </div>
+
+        {/* Caption if any */}
+        {caption && (
+          <div className="px-3 py-2">
+            <p className="text-white text-sm">{caption}</p>
+          </div>
+        )}
       </div>
 
-      {/* Caption if any */}
-      {caption && (
-        <div className="px-3 py-2">
-          <p className="text-white text-sm">{caption}</p>
+      {showVipModal && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowVipModal(false)}
+        >
+          <div
+            className="bg-gradient-to-b from-[#4a2c2c] to-[#3d2424] rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <AlertTriangle className="w-6 h-6 text-[#d4a574]" />
+              <h2 className="text-xl font-semibold text-[#f5e6d3]">Action blocked</h2>
+            </div>
+
+            <p className="text-[#c4a88a] mb-6">Become a VIP member of INSTACHECK.AI to unlock this conversation</p>
+
+            <button
+              onClick={handleGetVipAccess}
+              className="w-full py-4 bg-[#5a3d3d] hover:bg-[#6a4d4d] text-[#d4a574] font-semibold rounded-xl transition-colors"
+            >
+              Get VIP Access
+            </button>
+          </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
@@ -276,7 +326,6 @@ const conversationsData: Record<
     { id: 15, type: "reaction", emoji: "🥵" },
   ],
 
-  // Conversation 2 - Ash***** (reels - keeps as was)
   2: [
     { id: 1, type: "date", text: "NOV 27, 20:15" },
     {
@@ -284,9 +333,9 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/tettrem-avatar.jpg",
-        creatorUsername: "tettrem",
-        thumbnail: "/guy-with-headphones-streaming.jpg",
+        creatorAvatar: "/images/ash1.jpeg",
+        creatorUsername: "barretokeli ✓",
+        thumbnail: "/images/ash1.jpeg",
       },
     },
     { id: 3, type: "reaction", emoji: "🥲" },
@@ -297,12 +346,9 @@ const conversationsData: Record<
       type: "sent",
       content: "reel",
       reel: {
-        creatorAvatar: "/safadodesejo-avatar.jpg",
-        creatorUsername: "safadodesejo",
-        thumbnail: "/beetle-insect-on-wood.jpg",
-        isTwitterPost: true,
-        twitterHandle: "safadosdesejos",
-        twitterText: "Raw and on beat 👍",
+        creatorAvatar: "/images/ash2.jpeg",
+        creatorUsername: "giuliogroebert",
+        thumbnail: "/images/ash2.jpeg",
       },
     },
     { id: 7, type: "date", text: "05:44" },
@@ -311,10 +357,9 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/morimura-avatar-japanese.jpg",
-        creatorUsername: "morimura",
-        thumbnail: "/man-presenting-on-tv-screen-office.jpg",
-        caption: "Translating women's language:",
+        creatorAvatar: "/images/ash3.jpeg",
+        creatorUsername: "powderfluff... ✓",
+        thumbnail: "/images/ash3.jpeg",
       },
     },
     {
@@ -322,12 +367,12 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/jonas-milgrau-avatar.jpg",
-        creatorUsername: "jonas.milgrau",
-        thumbnail: "/girl-thinking-classroom.jpg",
+        creatorAvatar: "/images/ash4.jpeg",
+        creatorUsername: "grilabr",
+        thumbnail: "/images/ash4.jpeg",
         isTwitterPost: true,
-        twitterHandle: "Jonas.milgrau",
-        twitterText: "João Pedro is in his prime.",
+        twitterHandle: "grilabr",
+        twitterText: "Brasileiro aprendendo espanhol:",
       },
     },
     { id: 10, type: "date", text: "NOV 25, 15:22" },
@@ -336,10 +381,10 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/tinhooficial-avatar.jpg",
-        creatorUsername: "tinhooficial",
-        thumbnail: "/guy-with-hat-drinking-soda-blue-shirt.jpg",
-        caption: "I'll die dumb and single 🤫🤫🤫",
+        creatorAvatar: "/images/ash5.jpeg",
+        creatorUsername: "lucass_fukuda",
+        thumbnail: "/images/ash5.jpeg",
+        caption: "É por isso que você não tá evoluindo nos treinos...",
       },
     },
     { id: 12, type: "reaction", emoji: "😂" },
@@ -348,10 +393,9 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/ikarozets-avatar.jpg",
-        creatorUsername: "ikarozets",
-        thumbnail: "/young-man-white-shirt-street.jpg",
-        caption: "Never thought I'd go through this",
+        creatorAvatar: "/images/ash6.jpeg",
+        creatorUsername: "elpadrinotv_",
+        thumbnail: "/images/ash6.jpeg",
       },
     },
     { id: 14, type: "date", text: "YESTERDAY, 18:45" },
@@ -360,9 +404,9 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/tettrem-avatar-streamer.jpg",
-        creatorUsername: "tettrem",
-        thumbnail: "/couple-selfie-guy-girl.jpg",
+        creatorAvatar: "/images/ash7.jpeg",
+        creatorUsername: "fovworld",
+        thumbnail: "/images/ash7.jpeg",
       },
     },
   ],
@@ -434,10 +478,11 @@ const conversationsData: Record<
       type: "received",
       content: "reel",
       reel: {
-        creatorAvatar: "/dr-diego-avatar.jpg",
-        creatorUsername: "dr.diegooficial",
-        thumbnail: "/doctor-speaking-video.jpg",
-        caption: "The truth nobody tells you...",
+        creatorAvatar: "/images/lui-reel.jpeg",
+        creatorUsername: "melodyofici...",
+        thumbnail: "/images/lui-reel.jpeg",
+        caption: "",
+        verified: true,
       },
     },
     { id: 4, type: "sent", text: "Lol why did it remind you of me?", blurIndices: [2] },
@@ -545,7 +590,10 @@ export default function ChatConversation({ onBack, username, avatar, conversatio
             </p>
             <button
               className="w-full bg-[#8b6b6b] hover:bg-[#9a7a7a] text-white font-medium py-3 px-6 rounded-xl transition-colors"
-              onClick={() => setShowBlockedModal(false)}
+              onClick={() => {
+                setShowBlockedModal(false)
+                window.location.href = "/#contact"
+              }}
             >
               Get VIP Access
             </button>
