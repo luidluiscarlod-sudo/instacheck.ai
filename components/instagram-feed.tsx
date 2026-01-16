@@ -80,7 +80,7 @@ function JadeStory({ onClose }: { onClose: () => void }) {
 
       {/* Story Content - Full image */}
       <div className="flex-1 flex items-center justify-center bg-black">
-        <img src="/images/jade-story.jpeg" alt="Jade Picon Story" className="w-full h-full object-cover" />
+        <img src="/images/jade-story.jpeg" alt="Jade Picon Story" className="w-full h-full object-contain" />
       </div>
 
       {/* Bottom input */}
