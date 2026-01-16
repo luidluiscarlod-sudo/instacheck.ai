@@ -709,12 +709,8 @@ export default function ChatConversation({
             if (msg.type === "received" && msg.content === "audio") {
               return (
                 <div key={msg.id} className="flex items-end gap-2">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-800 flex-shrink-0">
-                    <img
-                      src={avatar || "/placeholder.svg"}
-                      alt=""
-                      className="w-full h-full object-cover blur-sm rounded-full"
-                    />
+                  <div className="w-8 h-8 flex-shrink-0" style={{ clipPath: "circle(50%)" }}>
+                    <img src={avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover blur-sm" />
                   </div>
                   <AudioWithTranscription
                     duration={msg.audioDuration || "0:00"}
@@ -752,12 +748,8 @@ export default function ChatConversation({
             if (msg.type === "received" && msg.text) {
               return (
                 <div key={msg.id} className="flex items-end gap-2">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-800 flex-shrink-0">
-                    <img
-                      src={avatar || "/placeholder.svg"}
-                      alt=""
-                      className="w-full h-full object-cover blur-sm rounded-full"
-                    />
+                  <div className="w-8 h-8 flex-shrink-0" style={{ clipPath: "circle(50%)" }}>
+                    <img src={avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover blur-sm" />
                   </div>
                   <div className="bg-[#262626] rounded-2xl rounded-bl-md px-4 py-2 max-w-[75%]">
                     <p className="text-sm text-white">
