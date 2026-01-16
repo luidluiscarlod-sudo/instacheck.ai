@@ -74,7 +74,7 @@ function ReelCard({
             <img
               src={creatorAvatar || "/placeholder.svg"}
               alt={creatorUsername}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
           <span className="text-white text-sm font-medium">{creatorUsername}</span>
@@ -93,7 +93,7 @@ function ReelCard({
                 <img
                   src={creatorAvatar || "/placeholder.svg"}
                   alt={creatorUsername}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
               <div className="flex items-center gap-1">
@@ -659,7 +659,11 @@ export default function ChatConversation({
           <div className="flex items-center gap-3">
             <ArrowLeft className="w-6 h-6 cursor-pointer" onClick={onBack} />
             <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-800">
-              <img src={avatar || "/placeholder.svg"} alt={username} className="w-full h-full object-cover blur-sm" />
+              <img
+                src={avatar || "/placeholder.svg"}
+                alt={username}
+                className="w-full h-full object-cover blur-sm rounded-full"
+              />
             </div>
             <div>
               <span className="font-semibold text-base">{username}</span>
