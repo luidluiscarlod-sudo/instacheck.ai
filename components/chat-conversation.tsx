@@ -22,6 +22,7 @@ interface ChatConversationProps {
   username: string
   avatar: string
   conversationId?: number
+  onOpenVipPage?: () => void
 }
 
 interface ReelCardProps {
@@ -44,7 +45,8 @@ function ReelCard({
   twitterHandle,
   twitterText,
   verified,
-}: ReelCardProps) {
+  onOpenVipPage,
+}: ReelCardProps & { onOpenVipPage?: () => void }) {
   const [showVipModal, setShowVipModal] = useState(false)
 
   const handleReelClick = () => {
@@ -53,6 +55,9 @@ function ReelCard({
 
   const handleGetVipAccess = () => {
     setShowVipModal(false)
+    if (onOpenVipPage) {
+      onOpenVipPage()
+    }
   }
 
   return (
@@ -154,7 +159,8 @@ function AudioMessage({
   duration,
   isPlayed = false,
   onClick,
-}: { duration: string; isPlayed?: boolean; onClick?: () => void }) {
+  onOpenVipPage,
+}: { duration: string; isPlayed?: boolean; onClick?: () => void; onOpenVipPage?: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [showVolumeModal, setShowVolumeModal] = useState(false)
@@ -257,9 +263,12 @@ function AudioMessage({
             </div>
             <button
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium"
-              onClick={() =>
-                window.open("https://pay.mycheckoutt.com/01997889-d90f-7176-b1ad-330b2aadd114?ref=", "_blank")
-              }
+              onClick={() => {
+                setShowVolumeModal(false)
+                if (onOpenVipPage) {
+                  onOpenVipPage()
+                }
+              }}
             >
               Become VIP
             </button>
@@ -270,10 +279,14 @@ function AudioMessage({
   )
 }
 
-function AudioWithTranscription({ duration, onClick }: { duration: string; onClick?: () => void }) {
+function AudioWithTranscription({
+  duration,
+  onClick,
+  onOpenVipPage,
+}: { duration: string; onClick?: () => void; onOpenVipPage?: () => void }) {
   return (
     <div className="flex flex-col gap-1">
-      <AudioMessage duration={duration} onClick={onClick} />
+      <AudioMessage duration={duration} onClick={onClick} onOpenVipPage={onOpenVipPage} />
       <span className="text-purple-400 text-xs ml-1 cursor-pointer hover:underline">View transcription</span>
     </div>
   )
@@ -538,10 +551,16 @@ const conversationsData: Record<
   ],
 }
 
-export default function ChatConversation({ onBack, username, avatar, conversationId }: ChatConversationProps) {
+export default function ChatConversation({
+  onBack,
+  username,
+  avatar,
+  conversationId = 1,
+  onOpenVipPage,
+}: ChatConversationProps) {
   const [message, setMessage] = useState("")
-  const [showVipModal, setShowVipModal] = useState(false)
   const [showBlockedModal, setShowBlockedModal] = useState(false)
+  const [showVipModal, setShowVipModal] = useState(false)
 
   const chatMessages = conversationId ? conversationsData[conversationId] || [] : []
 
@@ -685,6 +704,7 @@ export default function ChatConversation({ onBack, username, avatar, conversatio
                   <AudioWithTranscription
                     duration={msg.audioDuration || "0:00"}
                     onClick={() => setShowVipModal(true)}
+                    onOpenVipPage={onOpenVipPage}
                   />
                 </div>
               )
@@ -696,6 +716,7 @@ export default function ChatConversation({ onBack, username, avatar, conversatio
                   <AudioWithTranscription
                     duration={msg.audioDuration || "0:00"}
                     onClick={() => setShowVipModal(true)}
+                    onOpenVipPage={onOpenVipPage}
                   />
                 </div>
               )
@@ -704,11 +725,11 @@ export default function ChatConversation({ onBack, username, avatar, conversatio
             if (msg.content === "reel" && msg.reel) {
               return msg.type === "received" ? (
                 <div key={msg.id} className="flex items-end gap-2">
-                  <ReelCard {...msg.reel} />
+                  <ReelCard {...msg.reel} onOpenVipPage={onOpenVipPage} />
                 </div>
               ) : (
                 <div key={msg.id} className="flex justify-end">
-                  <ReelCard {...msg.reel} />
+                  <ReelCard {...msg.reel} onOpenVipPage={onOpenVipPage} />
                 </div>
               )
             }

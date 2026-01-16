@@ -225,6 +225,7 @@ export default function InstagramMessages({ onBack, username, profilePicUrl, pro
         username={showChat.username}
         avatar={showChat.avatar}
         conversationId={showChat.id}
+        onOpenVipPage={handleOpenVipPage}
       />
     )
   }
