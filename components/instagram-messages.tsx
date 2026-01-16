@@ -215,7 +215,20 @@ export default function InstagramMessages({ onBack, username, profilePicUrl, pro
   }
 
   const handleOpenVipPage = () => {
+    console.log("[v0] handleOpenVipPage called in InstagramMessages")
+    setShowChat(null) // Clear showChat first so VIP page can show
     setShowVipPage(true)
+  }
+
+  if (showVipPage) {
+    return (
+      <StalkeaLanding
+        onBack={() => setShowVipPage(false)}
+        username={username}
+        profileImage={profilePicUrl}
+        profileData={profileData}
+      />
+    )
   }
 
   if (showChat) {
@@ -226,17 +239,6 @@ export default function InstagramMessages({ onBack, username, profilePicUrl, pro
         avatar={showChat.avatar}
         conversationId={showChat.id}
         onOpenVipPage={handleOpenVipPage}
-      />
-    )
-  }
-
-  if (showVipPage) {
-    return (
-      <StalkeaLanding
-        onBack={() => setShowVipPage(false)}
-        username={username}
-        profileImage={profilePicUrl}
-        profileData={profileData}
       />
     )
   }
@@ -366,7 +368,7 @@ export default function InstagramMessages({ onBack, username, profilePicUrl, pro
                   <img
                     src={msg.avatar || "/placeholder.svg"}
                     alt={msg.username}
-                    className="w-full h-full object-cover blur-[3px]"
+                    className="w-full h-full object-cover blur-[3px] rounded-full"
                   />
                 </div>
                 {msg.locked && (

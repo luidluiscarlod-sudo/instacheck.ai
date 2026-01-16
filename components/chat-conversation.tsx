@@ -34,6 +34,7 @@ interface ReelCardProps {
   twitterHandle?: string
   twitterText?: string
   verified?: boolean
+  onOpenVipPage?: () => void
 }
 
 function ReelCard({
@@ -46,16 +47,20 @@ function ReelCard({
   twitterText,
   verified,
   onOpenVipPage,
-}: ReelCardProps & { onOpenVipPage?: () => void }) {
+}: ReelCardProps) {
   const [showVipModal, setShowVipModal] = useState(false)
 
   const handleReelClick = () => {
+    console.log("[v0] Reel clicked, showing modal")
     setShowVipModal(true)
   }
 
   const handleGetVipAccess = () => {
+    console.log("[v0] Get VIP Access clicked")
+    console.log("[v0] onOpenVipPage exists:", !!onOpenVipPage)
     setShowVipModal(false)
     if (onOpenVipPage) {
+      console.log("[v0] Calling onOpenVipPage")
       onOpenVipPage()
     }
   }
@@ -204,6 +209,13 @@ function AudioMessage({
     return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
+  const handleBecomeVip = () => {
+    setShowVolumeModal(false)
+    if (onOpenVipPage) {
+      onOpenVipPage()
+    }
+  }
+
   return (
     <>
       <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 rounded-2xl px-3 py-2 min-w-[200px]">
@@ -263,12 +275,7 @@ function AudioMessage({
             </div>
             <button
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium"
-              onClick={() => {
-                setShowVolumeModal(false)
-                if (onOpenVipPage) {
-                  onOpenVipPage()
-                }
-              }}
+              onClick={handleBecomeVip}
             >
               Become VIP
             </button>
@@ -555,12 +562,12 @@ export default function ChatConversation({
   onBack,
   username,
   avatar,
-  conversationId = 1,
+  conversationId,
   onOpenVipPage,
 }: ChatConversationProps) {
   const [message, setMessage] = useState("")
-  const [showBlockedModal, setShowBlockedModal] = useState(false)
   const [showVipModal, setShowVipModal] = useState(false)
+  const [showBlockedModal, setShowBlockedModal] = useState(false)
 
   const chatMessages = conversationId ? conversationsData[conversationId] || [] : []
 

@@ -13,16 +13,94 @@ import {
   Lock,
   AlertTriangle,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  MoreHorizontal,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import InstagramMessages from "./instagram-messages"
 import StalkeaLanding from "./stalkea-landing"
+
+function JadeStory({ onClose }: { onClose: () => void }) {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const duration = 6000 // 6 seconds
+    const interval = 50 // Update every 50ms
+    const increment = (interval / duration) * 100
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer)
+          onClose()
+          return 100
+        }
+        return prev + increment
+      })
+    }, interval)
+
+    return () => clearInterval(timer)
+  }, [onClose])
+
+  return (
+    <div className="fixed inset-0 bg-black z-[60] flex flex-col max-w-[480px] mx-auto">
+      {/* Progress bar */}
+      <div className="absolute top-0 left-0 right-0 px-2 pt-2 z-10">
+        <div className="h-0.5 bg-white/30 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-white rounded-full transition-all duration-50 ease-linear"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="absolute top-3 left-0 right-0 px-3 pt-3 z-10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img
+            src="/images/jadepicon-avatar.png"
+            alt="jadepicon"
+            className="w-8 h-8 rounded-full object-cover border-2 border-pink-500"
+          />
+          <div className="flex items-center gap-1">
+            <span className="text-white text-sm font-semibold">jadepicon</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
+          </div>
+          <span className="text-white/60 text-sm">19 h</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <MoreHorizontal className="w-6 h-6 text-white" />
+          <button onClick={onClose}>
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+      </div>
+
+      {/* Story Content - Full image */}
+      <div className="flex-1 flex items-center justify-center bg-black">
+        <img src="/images/jade-story.jpeg" alt="Jade Picon Story" className="w-full h-full object-cover" />
+      </div>
+
+      {/* Bottom input */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center gap-3 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="flex-1 border border-white/30 rounded-full px-4 py-2">
+          <span className="text-white/50 text-sm">Enviar mensagem...</span>
+        </div>
+        <Heart className="w-7 h-7 text-white" />
+        <Send className="w-7 h-7 text-white" />
+      </div>
+    </div>
+  )
+}
 
 interface Post {
   id: string
   username: string
   userImage: string
   postImage: string
+  carouselImages?: { url: string; locked: boolean }[]
   likes: number
   comments: number
   caption: string
@@ -41,6 +119,9 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
   const [showMessages, setShowMessages] = useState(false)
   const [showVipPage, setShowVipPage] = useState(false)
   const [hasReachedEnd, setHasReachedEnd] = useState(false)
+  const [carouselIndexes, setCarouselIndexes] = useState<{ [key: string]: number }>({})
+  const [showLockedImageModal, setShowLockedImageModal] = useState(false)
+  const [showJadeStory, setShowJadeStory] = useState(false)
 
   useEffect(() => {
     const notificationTimer = setTimeout(() => {
@@ -100,6 +181,13 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
       username: "jadepicon****",
       userImage: "/images/jadepicon-avatar.png",
       postImage: "/images/whatsapp-20image-202026-01-08-20at-2018.jpeg",
+      carouselImages: [
+        { url: "/images/whatsapp-20image-202026-01-08-20at-2018.jpeg", locked: false },
+        { url: "/images/jade-carousel-1.jpeg", locked: false },
+        { url: "/images/jade-carousel-2.jpeg", locked: true },
+        { url: "/images/jade-carousel-3.jpeg", locked: true },
+        { url: "/images/jade-carousel-4.jpeg", locked: true },
+      ],
       likes: 28100,
       comments: 622,
       caption: "Rio de Janeiro is still beautiful ...",
@@ -139,7 +227,12 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
       id: "fake-5",
       username: "alice****",
       userImage: "/images/alice.jpeg",
-      postImage: "/woman-winter-photo.jpg",
+      postImage: "/images/alice-main.jpeg",
+      carouselImages: [
+        { url: "/images/alice-main.jpeg", locked: false },
+        { url: "/images/alice-carousel-1.jpeg", locked: true },
+        { url: "/images/alice-carousel-2.jpeg", locked: true },
+      ],
       likes: 23,
       comments: 4,
       caption: "well this year I spent mostly at the gym, a bit at home and 7 days in the countryside... more",
@@ -231,6 +324,29 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
     setShowVipPage(true)
   }
 
+  const handleCarouselNav = (postId: string, direction: "prev" | "next", totalImages: number) => {
+    setCarouselIndexes((prev) => {
+      const currentIndex = prev[postId] || 0
+      let newIndex = direction === "next" ? currentIndex + 1 : currentIndex - 1
+      if (newIndex < 0) newIndex = 0
+      if (newIndex >= totalImages) newIndex = totalImages - 1
+      return { ...prev, [postId]: newIndex }
+    })
+  }
+
+  const handleLockedImageClick = () => {
+    setShowLockedImageModal(true)
+  }
+
+  // Added function to handle Jade Story
+  const handleOpenJadeStory = () => {
+    setShowJadeStory(true)
+  }
+
+  const handleCloseJadeStory = () => {
+    setShowJadeStory(false)
+  }
+
   if (showMessages) {
     return (
       <InstagramMessages
@@ -251,6 +367,11 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
         profileData={fullProfileData}
       />
     )
+  }
+
+  // Added Jade Story Modal
+  if (showJadeStory) {
+    return <JadeStory onClose={handleCloseJadeStory} />
   }
 
   return (
@@ -354,6 +475,24 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
               <p className="text-[11px] mt-1 text-gray-300 truncate w-[70px] text-center">{story.username}</p>
             </div>
           ))}
+          {/* Added Jade Story Button */}
+          <div className="flex flex-col items-center flex-shrink-0 cursor-pointer" onClick={handleOpenJadeStory}>
+            <div className="relative">
+              <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-br from-pink-400 to-pink-600 p-[2.5px]">
+                <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-black relative">
+                  <img
+                    src="/images/jadepicon-avatar.png"
+                    alt="jadepicon"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg?height=150&width=150"
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] mt-1 text-gray-300 truncate w-[70px] text-center">jadepicon</p>
+          </div>
         </div>
       </div>
 
@@ -364,7 +503,10 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
               {/* Post Header */}
               <div className="flex items-center justify-between px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
+                  <div
+                    className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-800 ${post.id === "fake-1" ? "ring-2 ring-pink-500 cursor-pointer" : ""}`}
+                    onClick={() => post.id === "fake-1" && handleOpenJadeStory()}
+                  >
                     <img
                       src={
                         post.userImage.startsWith("http")
@@ -385,20 +527,90 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
 
               {/* Post Image */}
               <div className="relative w-full aspect-[4/5] bg-gray-900 overflow-hidden">
-                <img
-                  src={
-                    post.postImage.startsWith("http")
-                      ? post.postImage.includes("wsrv.nl")
-                        ? post.postImage
-                        : `https://wsrv.nl/?url=${encodeURIComponent(post.postImage)}&w=800&h=1000&fit=cover`
-                      : post.postImage
-                  }
-                  alt="Post"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "/placeholder.svg?height=800&width=800"
-                  }}
-                />
+                {post.carouselImages && post.carouselImages.length > 1 ? (
+                  <>
+                    {/* Carousel Image */}
+                    {(() => {
+                      const currentIndex = carouselIndexes[post.id] || 0
+                      const currentImage = post.carouselImages[currentIndex]
+                      return (
+                        <div
+                          className="relative w-full h-full"
+                          onClick={() => currentImage.locked && handleLockedImageClick()}
+                        >
+                          <img
+                            src={currentImage.url || "/placeholder.svg"}
+                            alt="Post"
+                            className={`w-full h-full object-cover transition-all ${
+                              currentImage.locked ? "blur-[6px] brightness-90" : ""
+                            }`}
+                            onError={(e) => {
+                              e.currentTarget.src = "/placeholder.svg?height=800&width=800"
+                            }}
+                          />
+                          {/* Lock overlay for locked images */}
+                          {currentImage.locked && (
+                            <div className="absolute inset-0 flex items-center justify-center cursor-pointer">
+                              <div className="bg-black/40 rounded-full p-4">
+                                <Lock className="w-8 h-8 text-white" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })()}
+
+                    {/* Carousel Navigation Arrows */}
+                    {(carouselIndexes[post.id] || 0) > 0 && (
+                      <button
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-lg"
+                        onClick={() => handleCarouselNav(post.id, "prev", post.carouselImages!.length)}
+                      >
+                        <ChevronLeft className="w-5 h-5 text-black" />
+                      </button>
+                    )}
+                    {(carouselIndexes[post.id] || 0) < post.carouselImages.length - 1 && (
+                      <button
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-lg"
+                        onClick={() => handleCarouselNav(post.id, "next", post.carouselImages!.length)}
+                      >
+                        <ChevronRight className="w-5 h-5 text-black" />
+                      </button>
+                    )}
+
+                    {/* Carousel Dots Indicator */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {post.carouselImages.map((_, dotIndex) => (
+                        <div
+                          key={dotIndex}
+                          className={`w-1.5 h-1.5 rounded-full transition-all ${
+                            (carouselIndexes[post.id] || 0) === dotIndex ? "bg-blue-500 w-2" : "bg-white/60"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Image counter */}
+                    <div className="absolute top-3 right-3 bg-black/60 px-2.5 py-1 rounded-full text-xs">
+                      {(carouselIndexes[post.id] || 0) + 1}/{post.carouselImages.length}
+                    </div>
+                  </>
+                ) : (
+                  <img
+                    src={
+                      post.postImage.startsWith("http")
+                        ? post.postImage.includes("wsrv.nl")
+                          ? post.postImage
+                          : `https://wsrv.nl/?url=${encodeURIComponent(post.postImage)}&w=800&h=1000&fit=cover`
+                        : post.postImage
+                    }
+                    alt="Post"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg?height=800&width=800"
+                    }}
+                  />
+                )}
               </div>
 
               {/* Post Actions */}
@@ -500,6 +712,41 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
               <button
                 className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl transition-colors backdrop-blur-sm border border-white/30"
                 onClick={handleOpenVipPage}
+              >
+                Get VIP Access
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLockedImageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop with blur */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowLockedImageModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-gradient-to-br from-amber-900/90 to-rose-900/90 rounded-2xl p-8 mx-4 max-w-sm w-full shadow-2xl">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+
+              <h3 className="text-white font-bold text-lg mb-3">Action blocked</h3>
+
+              <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                Become a VIP member of INSTACHECK.AI to unlock this conversation
+              </p>
+
+              <button
+                className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl transition-colors backdrop-blur-sm border border-white/30"
+                onClick={() => {
+                  setShowLockedImageModal(false)
+                  handleOpenVipPage()
+                }}
               >
                 Get VIP Access
               </button>
