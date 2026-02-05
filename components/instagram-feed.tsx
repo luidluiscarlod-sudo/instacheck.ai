@@ -365,6 +365,7 @@ export function InstagramFeed({ profileData, username }: InstagramFeedProps) {
         username={username}
         profileImage={userProfilePic}
         profileData={fullProfileData}
+        hideBack={true}
       />
     )
   }

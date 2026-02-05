@@ -208,6 +208,7 @@ export function HeroSection() {
         onBack={() => setShowVipFromLimit(false)}
         username={previousSearch.username || username || ""}
         profileImage={previousSearch.profilePicUrl}
+        hideBack={true}
         profileData={{
           username: previousSearch.username,
           fullName: previousSearch.fullName,
