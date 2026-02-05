@@ -42,11 +42,12 @@ export function HeroSection() {
 
   useEffect(() => {
     setCurrentDay(getDayOfWeek())
-    const savedSearch = localStorage.getItem("instacheck_previous_search")
-    if (savedSearch) {
-      setPreviousSearch(JSON.parse(savedSearch))
-      setShowLimitReached(true)
-    }
+    // DESATIVADO: Limite de usuario por dispositivo
+    // const savedSearch = localStorage.getItem("instacheck_previous_search")
+    // if (savedSearch) {
+    //   setPreviousSearch(JSON.parse(savedSearch))
+    //   setShowLimitReached(true)
+    // }
   }, [])
 
   useEffect(() => {
@@ -171,13 +172,14 @@ export function HeroSection() {
   }
 
   const handleConfirm = () => {
-    const profile = userProfileData?.result || userProfileData
-    const searchData: PreviousSearch = {
-      username: username,
-      profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
-      fullName: profile?.full_name || username,
-    }
-    localStorage.setItem("instacheck_previous_search", JSON.stringify(searchData))
+    // DESATIVADO: Limite de usuario por dispositivo
+    // const profile = userProfileData?.result || userProfileData
+    // const searchData: PreviousSearch = {
+    //   username: username,
+    //   profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
+    //   fullName: profile?.full_name || username,
+    // }
+    // localStorage.setItem("instacheck_previous_search", JSON.stringify(searchData))
 
     setShowConfirmation(false)
     setShowFeed(true)
