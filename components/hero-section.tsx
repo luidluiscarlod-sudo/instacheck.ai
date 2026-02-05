@@ -23,6 +23,7 @@ interface PreviousSearch {
 export function HeroSection() {
   const [username, setUsername] = useState("")
   const [showInput, setShowInput] = useState(false)
+  const [showSearching, setShowSearching] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showFeed, setShowFeed] = useState(false)
@@ -120,7 +121,8 @@ export function HeroSection() {
       return
     }
 
-    setShowLoading(true)
+    // Primeiro mostra a tela de "Procurando..."
+    setShowSearching(true)
 
     try {
       const [profileResponse, postsResponse] = await Promise.all([
@@ -154,14 +156,20 @@ export function HeroSection() {
 
       setUserProfileData(profileDataResult)
       setProfileData(postsDataResult)
+      
+      // Depois de carregar os dados, vai para confirmacao
+      setShowSearching(false)
+      setShowConfirmation(true)
     } catch (error) {
       console.error("[v0] API Error:", error)
+      setShowSearching(false)
     }
   }
 
   const handleLoadingConfirm = () => {
+    // Depois do loading, vai pro feed
     setShowLoading(false)
-    setShowConfirmation(true)
+    setShowFeed(true)
   }
 
   const handleCorrect = () => {
@@ -179,8 +187,9 @@ export function HeroSection() {
     }
     localStorage.setItem("instacheck_previous_search", JSON.stringify(searchData))
 
+    // Depois de confirmar, mostra o loading
     setShowConfirmation(false)
-    setShowFeed(true)
+    setShowLoading(true)
   }
 
   if (showLimitReached && previousSearch) {
@@ -248,22 +257,23 @@ export function HeroSection() {
     )
   }
 
-  if (showFeed && profileData) {
-    const profile = userProfileData?.result || userProfileData
-
-    const enrichedProfileData = {
-      ...profileData,
-      username: username,
-      fullName: profile?.full_name || username,
-      profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
-      biography: profile?.biography || "",
-      followersCount: profile?.follower_count || profile?.edge_followed_by?.count || 0,
-      followingCount: profile?.following_count || profile?.edge_follow?.count || 0,
-      postsCount:
-        profile?.media_count || profile?.edge_owner_to_timeline_media?.count || profileData.result?.edges?.length || 0,
-    }
-
-    return <InstagramFeed profileData={enrichedProfileData} username={username} />
+  if (showSearching) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
+        <div className="max-w-md w-full">
+          <div className="bg-zinc-900/95 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8">
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 rounded-full border-4 border-purple-500 border-t-transparent animate-spin" />
+            </div>
+            <h2 className="text-2xl font-bold text-white text-center mb-2">Searching...</h2>
+            <p className="text-gray-400 text-center mb-4">
+              Looking for <span className="text-purple-500 font-semibold">@{username}</span>
+            </p>
+            <p className="text-gray-500 text-center text-sm">Please wait while we fetch the profile data</p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   if (showConfirmation && profileData) {
@@ -284,6 +294,24 @@ export function HeroSection() {
         onConfirm={handleConfirm}
       />
     )
+  }
+
+  if (showFeed && profileData) {
+    const profile = userProfileData?.result || userProfileData
+
+    const enrichedProfileData = {
+      ...profileData,
+      username: username,
+      fullName: profile?.full_name || username,
+      profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
+      biography: profile?.biography || "",
+      followersCount: profile?.follower_count || profile?.edge_followed_by?.count || 0,
+      followingCount: profile?.following_count || profile?.edge_follow?.count || 0,
+      postsCount:
+        profile?.media_count || profile?.edge_owner_to_timeline_media?.count || profileData.result?.edges?.length || 0,
+    }
+
+    return <InstagramFeed profileData={enrichedProfileData} username={username} />
   }
 
   if (showLoading) {
