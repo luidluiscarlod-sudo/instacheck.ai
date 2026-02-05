@@ -18,9 +18,10 @@ interface StalkeaLandingProps {
   username: string
   profileImage?: string
   profileData?: ProfileData
+  hideBack?: boolean
 }
 
-export default function StalkeaLanding({ onBack, username, profileImage, profileData }: StalkeaLandingProps) {
+export default function StalkeaLanding({ onBack, username, profileImage, profileData, hideBack = false }: StalkeaLandingProps) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
   const [timeRemaining, setTimeRemaining] = useState(120)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
@@ -114,10 +115,12 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
 
   return (
     <div className="bg-black text-white min-h-screen pb-24 max-w-[480px] mx-auto">
-      {/* Header */}
-      <div className="sticky top-0 z-30 bg-black/95 backdrop-blur-sm px-4 py-3 border-b border-gray-800">
-        <ArrowLeft className="w-6 h-6 cursor-pointer" onClick={onBack} />
-      </div>
+  {/* Header */}
+  {!hideBack && (
+  <div className="sticky top-0 z-30 bg-black/95 backdrop-blur-sm px-4 py-3 border-b border-gray-800">
+  <ArrowLeft className="w-6 h-6 cursor-pointer" onClick={onBack} />
+  </div>
+  )}
 
       {/* Hero Section */}
       <div className="px-4 pt-6 pb-8 text-center">

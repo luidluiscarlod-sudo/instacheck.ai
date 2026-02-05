@@ -227,6 +227,7 @@ export default function InstagramMessages({ onBack, username, profilePicUrl, pro
         username={username}
         profileImage={profilePicUrl}
         profileData={profileData}
+        hideBack={true}
       />
     )
   }
