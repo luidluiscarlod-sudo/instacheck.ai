@@ -250,24 +250,6 @@ export function HeroSection() {
     )
   }
 
-  if (showFeed && profileData) {
-    const profile = userProfileData?.result || userProfileData
-
-    const enrichedProfileData = {
-      ...profileData,
-      username: username,
-      fullName: profile?.full_name || username,
-      profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
-      biography: profile?.biography || "",
-      followersCount: profile?.follower_count || profile?.edge_followed_by?.count || 0,
-      followingCount: profile?.following_count || profile?.edge_follow?.count || 0,
-      postsCount:
-        profile?.media_count || profile?.edge_owner_to_timeline_media?.count || profileData.result?.edges?.length || 0,
-    }
-
-    return <InstagramFeed profileData={enrichedProfileData} username={username} />
-  }
-
   if (showConfirmation && profileData) {
     const profile = userProfileData?.result || userProfileData
 
@@ -286,6 +268,24 @@ export function HeroSection() {
         onConfirm={handleConfirm}
       />
     )
+  }
+
+  if (showFeed && profileData) {
+    const profile = userProfileData?.result || userProfileData
+
+    const enrichedProfileData = {
+      ...profileData,
+      username: username,
+      fullName: profile?.full_name || username,
+      profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
+      biography: profile?.biography || "",
+      followersCount: profile?.follower_count || profile?.edge_followed_by?.count || 0,
+      followingCount: profile?.following_count || profile?.edge_follow?.count || 0,
+      postsCount:
+        profile?.media_count || profile?.edge_owner_to_timeline_media?.count || profileData.result?.edges?.length || 0,
+    }
+
+    return <InstagramFeed profileData={enrichedProfileData} username={username} />
   }
 
   if (showLoading) {
