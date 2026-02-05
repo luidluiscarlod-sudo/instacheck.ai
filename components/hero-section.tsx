@@ -19,6 +19,10 @@ interface PreviousSearch {
   username: string
   profilePicUrl: string
   fullName: string
+  biography: string
+  followersCount: number
+  followingCount: number
+  postsCount: number
 }
 
 export function HeroSection() {
@@ -186,6 +190,10 @@ export function HeroSection() {
       username: username,
       profilePicUrl: profile?.profile_pic_url_hd || profile?.profile_pic_url || "/placeholder.svg",
       fullName: profile?.full_name || username,
+      biography: profile?.biography || "",
+      followersCount: profile?.follower_count || profile?.edge_followed_by?.count || 0,
+      followingCount: profile?.following_count || profile?.edge_follow?.count || 0,
+      postsCount: profile?.media_count || profile?.edge_owner_to_timeline_media?.count || 0,
     }
     localStorage.setItem("instacheck_previous_search", JSON.stringify(searchData))
 
@@ -194,12 +202,21 @@ export function HeroSection() {
     setShowLoading(true)
   }
 
-  if (showVipFromLimit) {
+  if (showVipFromLimit && previousSearch) {
     return (
       <StalkeaLanding
         onBack={() => setShowVipFromLimit(false)}
-        username={previousSearch?.username || username || ""}
-        profileImage={previousSearch?.profilePicUrl}
+        username={previousSearch.username || username || ""}
+        profileImage={previousSearch.profilePicUrl}
+        profileData={{
+          username: previousSearch.username,
+          fullName: previousSearch.fullName,
+          profilePicUrl: previousSearch.profilePicUrl,
+          biography: previousSearch.biography || "",
+          postsCount: previousSearch.postsCount || 0,
+          followersCount: previousSearch.followersCount || 0,
+          followingCount: previousSearch.followingCount || 0,
+        }}
       />
     )
   }
