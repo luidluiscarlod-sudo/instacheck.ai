@@ -121,7 +121,8 @@ export function HeroSection() {
       return
     }
 
-    setShowLoading(true)
+    // Primeiro mostra a confirmacao do perfil
+    setShowConfirmation(true)
 
     try {
       const [profileResponse, postsResponse] = await Promise.all([
@@ -161,8 +162,9 @@ export function HeroSection() {
   }
 
   const handleLoadingConfirm = () => {
+    // Depois do loading, vai pro feed
     setShowLoading(false)
-    setShowConfirmation(true)
+    setShowFeed(true)
   }
 
   const handleCorrect = () => {
@@ -181,8 +183,9 @@ export function HeroSection() {
     // }
     // localStorage.setItem("instacheck_previous_search", JSON.stringify(searchData))
 
+    // Depois de confirmar, mostra o loading
     setShowConfirmation(false)
-    setShowFeed(true)
+    setShowLoading(true)
   }
 
   if (showLimitReached && previousSearch) {
