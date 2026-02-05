@@ -195,7 +195,13 @@ export function HeroSection() {
   }
 
   if (showVipFromLimit) {
-    return <StalkeaLanding />
+    return (
+      <StalkeaLanding
+        onBack={() => setShowVipFromLimit(false)}
+        username={previousSearch?.username || username || ""}
+        profileImage={previousSearch?.profilePicUrl}
+      />
+    )
   }
 
   if (showLimitReached && previousSearch) {
