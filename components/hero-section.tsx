@@ -23,6 +23,7 @@ interface PreviousSearch {
 export function HeroSection() {
   const [username, setUsername] = useState("")
   const [showInput, setShowInput] = useState(false)
+  const [showSearching, setShowSearching] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showFeed, setShowFeed] = useState(false)
@@ -121,8 +122,8 @@ export function HeroSection() {
       return
     }
 
-    // Primeiro mostra a confirmacao do perfil
-    setShowConfirmation(true)
+    // Primeiro mostra a tela de "Procurando..."
+    setShowSearching(true)
 
     try {
       const [profileResponse, postsResponse] = await Promise.all([
@@ -156,8 +157,13 @@ export function HeroSection() {
 
       setUserProfileData(profileDataResult)
       setProfileData(postsDataResult)
+      
+      // Depois de carregar os dados, vai para confirmacao
+      setShowSearching(false)
+      setShowConfirmation(true)
     } catch (error) {
       console.error("[v0] API Error:", error)
+      setShowSearching(false)
     }
   }
 
@@ -247,6 +253,25 @@ export function HeroSection() {
                 notified about your spying, only VIP members have their privacy preserved during spying.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (showSearching) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
+        <div className="max-w-md w-full">
+          <div className="bg-zinc-900/95 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8">
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 rounded-full border-4 border-purple-500 border-t-transparent animate-spin" />
+            </div>
+            <h2 className="text-2xl font-bold text-white text-center mb-2">Searching...</h2>
+            <p className="text-gray-400 text-center mb-4">
+              Looking for <span className="text-purple-500 font-semibold">@{username}</span>
+            </p>
+            <p className="text-gray-500 text-center text-sm">Please wait while we fetch the profile data</p>
           </div>
         </div>
       </section>
