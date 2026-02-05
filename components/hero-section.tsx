@@ -43,11 +43,12 @@ export function HeroSection() {
 
   useEffect(() => {
     setCurrentDay(getDayOfWeek())
-    const savedSearch = localStorage.getItem("instacheck_previous_search")
-    if (savedSearch) {
-      setPreviousSearch(JSON.parse(savedSearch))
-      setShowLimitReached(true)
-    }
+    // DESATIVADO: Limite de usuario por dispositivo
+    // const savedSearch = localStorage.getItem("instacheck_previous_search")
+    // if (savedSearch) {
+    //   setPreviousSearch(JSON.parse(savedSearch))
+    //   setShowLimitReached(true)
+    // }
   }, [])
 
   useEffect(() => {
