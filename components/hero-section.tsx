@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import { InstagramLoading } from "./instagram-loading"
 import { ProfileConfirmation } from "./profile-confirmation"
 import { InstagramFeed } from "./instagram-feed"
+import StalkeaLanding from "./stalkea-landing"
 import Image from "next/image"
 
 function getDayOfWeek(): string {
@@ -31,6 +32,7 @@ export function HeroSection() {
   const [userProfileData, setUserProfileData] = useState<any>(null)
   const [currentDay, setCurrentDay] = useState("")
   const [showLimitReached, setShowLimitReached] = useState(false)
+  const [showVipFromLimit, setShowVipFromLimit] = useState(false)
   const [previousSearch, setPreviousSearch] = useState<PreviousSearch | null>(null)
 
   const [displayedTitle, setDisplayedTitle] = useState("")
@@ -193,6 +195,10 @@ export function HeroSection() {
     setShowLoading(true)
   }
 
+  if (showVipFromLimit) {
+    return <StalkeaLanding />
+  }
+
   if (showLimitReached && previousSearch) {
     const proxyProfilePic = previousSearch.profilePicUrl?.includes("instagram")
       ? `https://wsrv.nl/?url=${encodeURIComponent(previousSearch.profilePicUrl)}&w=150&h=150&fit=cover`
@@ -238,7 +244,8 @@ export function HeroSection() {
 
             <Button
               onClick={() => {
-                window.location.href = "https://pay.mycheckoutt.com/01997889-d90f-7176-b1ad-330b2aadd114?ref="
+                setShowLimitReached(false)
+                setShowVipFromLimit(true)
               }}
               className="w-full h-14 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white text-lg font-semibold rounded-2xl mb-4 flex items-center justify-center gap-2"
             >
