@@ -343,7 +343,7 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
         <div className="text-center mb-6">
           <p className="text-gray-400 line-through text-sm">From: $279.90</p>
           <p className="text-5xl font-bold text-purple-500 mb-2">
-            $37<span className="text-2xl">.00</span>
+            $29<span className="text-2xl">.00</span>
           </p>
           <div className="flex items-center justify-center gap-4 text-xs text-gray-300">
             <div className="flex items-center gap-1">
@@ -454,7 +454,7 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
       <div className="fixed bottom-0 left-0 right-0 z-50 max-w-[480px] mx-auto bg-gradient-to-r from-purple-600 to-purple-700 px-4 py-3 shadow-2xl">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white font-bold text-sm">VIP Access for only $37.00</p>
+            <p className="text-white font-bold text-sm">VIP Access for only $29.00</p>
             <p className="text-purple-200 text-xs">Available for {formatTime(timeRemaining)}</p>
           </div>
           <a
