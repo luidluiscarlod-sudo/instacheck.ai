@@ -26,6 +26,7 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
   const [timeRemaining, setTimeRemaining] = useState(120)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [showLocationVipModal, setShowLocationVipModal] = useState(false)
+  const [userLocation, setUserLocation] = useState<{city: string, country: string, lat: number, lng: number} | null>(null)
 
   const testimonials = [
     {
@@ -69,6 +70,33 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
 
     return () => clearInterval(testimonialTimer)
   }, [testimonials.length])
+
+  // Fetch user location using IP geolocation
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/")
+        const data = await response.json()
+        if (data.city && data.country_name) {
+          setUserLocation({
+            city: data.city,
+            country: data.country_name,
+            lat: data.latitude,
+            lng: data.longitude
+          })
+        }
+      } catch (error) {
+        // Fallback location if API fails
+        setUserLocation({
+          city: "Sao Paulo",
+          country: "Brazil",
+          lat: -23.5505,
+          lng: -46.6333
+        })
+      }
+    }
+    fetchLocation()
+  }, [])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -197,9 +225,17 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
         </p>
         <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
           <div className="h-48 bg-gray-800 relative">
-            <img src="/images/unnamed.png" alt="Map" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full border-4 border-green-500 overflow-hidden">
+            {userLocation ? (
+              <iframe
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.lng - 0.02}%2C${userLocation.lat - 0.015}%2C${userLocation.lng + 0.02}%2C${userLocation.lat + 0.015}&layer=mapnik&marker=${userLocation.lat}%2C${userLocation.lng}`}
+                className="w-full h-full border-0"
+                style={{ filter: "grayscale(30%) brightness(0.8)" }}
+              />
+            ) : (
+              <img src="/images/unnamed.png" alt="Map" className="w-full h-full object-cover" />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-16 h-16 rounded-full border-4 border-green-500 overflow-hidden shadow-lg">
                 <img
                   src={
                     actualProfilePic.startsWith("http")
@@ -217,12 +253,14 @@ export default function StalkeaLanding({ onBack, username, profileImage, profile
           </div>
           <div className="p-4">
             <p className="font-semibold mb-1">Current Location</p>
-            <p className="text-gray-400 text-sm">@{displayUsername}</p>
+            <p className="text-gray-400 text-sm">
+              {userLocation ? `${userLocation.city}, ${userLocation.country}` : "Loading..."}
+            </p>
             <button
               onClick={() => setShowLocationVipModal(true)}
               className="mt-3 w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm transition-colors"
             >
-              View
+              View Full Location
             </button>
           </div>
         </div>
