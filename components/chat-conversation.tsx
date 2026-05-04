@@ -313,6 +313,79 @@ function BlurredChatText({ text, blurIndices }: { text: string; blurIndices: num
   )
 }
 
+// Helper function to generate dynamic dates based on current time
+function getDynamicDate(type: "today" | "yesterday" | "2days" | "3days", time?: string): string {
+  const now = new Date()
+  
+  switch (type) {
+    case "today":
+      return `TODAY, ${time || `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`}`
+    case "yesterday":
+      return `YESTERDAY, ${time || "22:30"}`
+    case "2days":
+      const twoDaysAgo = new Date(now)
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+      const dayName2 = twoDaysAgo.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()
+      return `${dayName2}, ${time || "20:00"}`
+    case "3days":
+      return `2 DAYS AGO`
+    default:
+      return `YESTERDAY, ${time || "20:00"}`
+  }
+}
+
+// Function to get current time formatted
+function getCurrentTime(): string {
+  const now = new Date()
+  return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+}
+
+// Function to get a random recent time for today
+function getRecentTime(hoursAgo: number = 0): string {
+  const now = new Date()
+  now.setHours(now.getHours() - hoursAgo)
+  return `${now.getHours().toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`
+}
+
+// Conversation date templates - will be replaced with dynamic dates at runtime
+const conversationDateTemplates: Record<number, Array<{ position: number; type: "today" | "yesterday" | "2days" | "3days"; time?: string }>> = {
+  1: [
+    { position: 1, type: "yesterday", time: "22:30" },
+    { position: 8, type: "today", time: "10:15" },
+  ],
+  2: [
+    { position: 1, type: "2days", time: "20:15" },
+    { position: 5, type: "yesterday", time: "14:08" },
+    { position: 7, type: "today", time: "05:44" },
+    { position: 10, type: "2days", time: "15:22" },
+    { position: 14, type: "yesterday", time: "18:45" },
+  ],
+  3: [
+    { position: 1, type: "yesterday", time: "19:45" },
+    { position: 12, type: "today", time: "14:20" },
+  ],
+  4: [
+    { position: 1, type: "2days", time: "21:00" },
+    { position: 9, type: "yesterday", time: "15:30" },
+  ],
+  5: [
+    { position: 1, type: "2days" },
+    { position: 8, type: "yesterday", time: "20:15" },
+  ],
+  6: [
+    { position: 1, type: "2days" },
+    { position: 10, type: "yesterday" },
+  ],
+  7: [
+    { position: 1, type: "yesterday", time: "23:45" },
+    { position: 11, type: "today" },
+  ],
+  8: [
+    { position: 1, type: "2days", time: "21:00" },
+    { position: 9, type: "yesterday", time: "00:30" },
+  ],
+}
+
 const conversationsData: Record<
   number,
   Array<{
@@ -329,14 +402,14 @@ const conversationsData: Record<
 > = {
   // Conversation 1 - Fer*****
   1: [
-    { id: 1, type: "date", text: "YESTERDAY, 22:30" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "received", text: "Hey hottie, guess what you forgot at my place... 😏", blurIndices: [1, 6] },
     { id: 3, type: "sent", text: "Hmm maybe I forgot on purpose? 🔥", blurIndices: [4] },
     { id: 4, type: "received", text: "Ahhh naughty lol", blurIndices: [1] },
     { id: 5, type: "received", content: "audio", audioDuration: "0:23" },
     { id: 6, type: "sent", text: "Stop teasing me like that...", blurIndices: [3] },
     { id: 7, type: "received", text: "Teasing? Me? Never 😇", blurIndices: [] },
-    { id: 8, type: "date", text: "TODAY, 10:15" },
+    { id: 8, type: "date", text: "" },
     { id: 9, type: "received", text: "Good morning... woke up thinking about you 🥵", blurIndices: [3, 4] },
     { id: 10, type: "sent", text: "Thinking how? Tell me...", blurIndices: [1] },
     { id: 11, type: "received", content: "audio", audioDuration: "0:45" },
@@ -347,7 +420,7 @@ const conversationsData: Record<
   ],
 
   2: [
-    { id: 1, type: "date", text: "NOV 27, 20:15" },
+    { id: 1, type: "date", text: "" },
     {
       id: 2,
       type: "received",
@@ -360,7 +433,7 @@ const conversationsData: Record<
     },
     { id: 3, type: "reaction", emoji: "🥲" },
     { id: 4, type: "sent", text: "Found this one sad", blurIndices: [1] },
-    { id: 5, type: "date", text: "NOV 29, 14:08" },
+    { id: 5, type: "date", text: "" },
     {
       id: 6,
       type: "sent",
@@ -371,7 +444,7 @@ const conversationsData: Record<
         thumbnail: "/images/ash2.jpeg",
       },
     },
-    { id: 7, type: "date", text: "05:44" },
+    { id: 7, type: "date", text: "" },
     {
       id: 8,
       type: "received",
@@ -395,7 +468,7 @@ const conversationsData: Record<
         twitterText: "Brasileiro aprendendo espanhol:",
       },
     },
-    { id: 10, type: "date", text: "NOV 25, 15:22" },
+    { id: 10, type: "date", text: "" },
     {
       id: 11,
       type: "received",
@@ -418,7 +491,7 @@ const conversationsData: Record<
         thumbnail: "/images/ash6.jpeg",
       },
     },
-    { id: 14, type: "date", text: "YESTERDAY, 18:45" },
+    { id: 14, type: "date", text: "" },
     {
       id: 15,
       type: "received",
@@ -433,7 +506,7 @@ const conversationsData: Record<
 
   // Conversation 3 - Lac*****
   3: [
-    { id: 1, type: "date", text: "YESTERDAY, 19:45" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "sent", text: "Hey stranger... I missed you", blurIndices: [1, 4] },
     { id: 3, type: "received", text: "Missed me? Sure... 😏", blurIndices: [0] },
     { id: 4, type: "sent", text: "I'm being serious", blurIndices: [] },
@@ -444,7 +517,7 @@ const conversationsData: Record<
     { id: 9, type: "received", text: "Hmm how?", blurIndices: [] },
     { id: 10, type: "sent", content: "audio", audioDuration: "0:32" },
     { id: 11, type: "received", text: "Ooh... liked the proposal 😈", blurIndices: [1, 3] },
-    { id: 12, type: "date", text: "TODAY, 14:20" },
+    { id: 12, type: "date", text: "" },
     { id: 13, type: "sent", text: "So, shall we schedule?", blurIndices: [2] },
     { id: 14, type: "received", text: "Ok we'll talk later", blurIndices: [] },
     { id: 15, type: "reaction", emoji: "😘" },
@@ -452,7 +525,7 @@ const conversationsData: Record<
 
   // Conversation 4 - And*****
   4: [
-    { id: 1, type: "date", text: "DAY BEFORE YESTERDAY, 21:00" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "received", text: "Saw you were online and didn't text me 😤", blurIndices: [3, 6] },
     { id: 3, type: "sent", text: "Lol was waiting for you to text first", blurIndices: [2] },
     { id: 4, type: "received", text: "Oh really? Playing hard to get?", blurIndices: [2] },
@@ -460,7 +533,7 @@ const conversationsData: Record<
     { id: 6, type: "received", content: "audio", audioDuration: "0:28" },
     { id: 7, type: "sent", text: "That laugh... 🥵", blurIndices: [1] },
     { id: 8, type: "received", text: "Stop lol", blurIndices: [] },
-    { id: 9, type: "date", text: "YESTERDAY, 15:30" },
+    { id: 9, type: "date", text: "" },
     { id: 10, type: "sent", text: "Dreamed about you", blurIndices: [1] },
     { id: 11, type: "received", text: "Whoa... tell me more 👀", blurIndices: [1] },
     { id: 12, type: "sent", content: "audio", audioDuration: "0:55" },
@@ -471,14 +544,14 @@ const conversationsData: Record<
 
   // Conversation 5 - Bru****
   5: [
-    { id: 1, type: "date", text: "3 DAYS AGO" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "received", text: "I'm coming to town next week 👀", blurIndices: [2, 3] },
     { id: 3, type: "sent", text: "Really?! Coming to see me right", blurIndices: [2] },
     { id: 4, type: "received", text: "If you want...", blurIndices: [1] },
     { id: 5, type: "sent", text: "Stop playing hard to get 🔥", blurIndices: [2, 4] },
     { id: 6, type: "received", content: "audio", audioDuration: "0:41" },
     { id: 7, type: "sent", text: "Now I'm excited", blurIndices: [1] },
-    { id: 8, type: "date", text: "YESTERDAY, 20:15" },
+    { id: 8, type: "date", text: "" },
     { id: 9, type: "received", text: "Already booked the hotel... room with a view 😏", blurIndices: [2, 4] },
     { id: 10, type: "sent", text: "The view will be the last thing we'll look at", blurIndices: [1, 5, 8] },
     { id: 11, type: "received", text: "🥵🥵🥵", blurIndices: [] },
@@ -491,7 +564,7 @@ const conversationsData: Record<
 
   // Conversation 6 - lui*****
   6: [
-    { id: 1, type: "date", text: "4 DAYS AGO" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "received", text: "Check this reel lol reminded me of you", blurIndices: [2, 4] },
     {
       id: 3,
@@ -511,7 +584,7 @@ const conversationsData: Record<
     { id: 7, type: "received", content: "audio", audioDuration: "0:33" },
     { id: 8, type: "sent", text: "Hmm got it... so you liked it right 🔥", blurIndices: [1, 3] },
     { id: 9, type: "received", text: "Maybe...", blurIndices: [] },
-    { id: 10, type: "date", text: "DAY BEFORE YESTERDAY" },
+    { id: 10, type: "date", text: "" },
     { id: 11, type: "sent", text: "So, when will you stop with maybe and admit it?", blurIndices: [3, 5] },
     { id: 12, type: "received", text: "Admit what?", blurIndices: [1] },
     { id: 13, type: "sent", text: "That you want me 😈", blurIndices: [1] },
@@ -521,7 +594,7 @@ const conversationsData: Record<
 
   // Conversation 7 - ron*****
   7: [
-    { id: 1, type: "date", text: "SATURDAY, 23:45" },
+    { id: 1, type: "date", text: "" },
     { id: 2, type: "received", text: "Hey... here thinking about some things 🥵", blurIndices: [3, 5] },
     { id: 3, type: "sent", text: "What things? 👀", blurIndices: [1] },
     { id: 4, type: "received", content: "audio", audioDuration: "0:48" },
@@ -531,7 +604,7 @@ const conversationsData: Record<
     { id: 8, type: "received", text: "I want to hear you say it", blurIndices: [1, 3] },
     { id: 9, type: "sent", content: "audio", audioDuration: "0:35" },
     { id: 10, type: "received", text: "🔥🔥🔥 need to see you soon", blurIndices: [1, 3] },
-    { id: 11, type: "date", text: "SUNDAY" },
+    { id: 11, type: "date", text: "" },
     { id: 12, type: "sent", text: "Woke up missing you", blurIndices: [2] },
     { id: 13, type: "received", text: "Missing me or what I said last night?", blurIndices: [1, 5] },
     { id: 14, type: "sent", text: "Both 😈", blurIndices: [1] },
@@ -569,7 +642,19 @@ export default function ChatConversation({
   const [showVipModal, setShowVipModal] = useState(false)
   const [showBlockedModal, setShowBlockedModal] = useState(false)
 
-  const chatMessages = conversationId ? conversationsData[conversationId] || [] : []
+  // Process chat messages with dynamic dates
+  const chatMessages = conversationId ? (conversationsData[conversationId] || []).map((msg) => {
+    if (msg.type === "date" && conversationId && conversationDateTemplates[conversationId]) {
+      const template = conversationDateTemplates[conversationId].find(t => t.position === msg.id)
+      if (template) {
+        return {
+          ...msg,
+          text: getDynamicDate(template.type, template.time)
+        }
+      }
+    }
+    return msg
+  }) : []
 
   const getOnlineStatus = (id?: number) => {
     switch (id) {
