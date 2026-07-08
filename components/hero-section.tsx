@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Eye, Lock, Key, Check, AlertCircle, MessageCircle, ImageIcon, MapPin, LayoutGrid } from "lucide-react"
+import { Eye, Lock, Key, Check, AlertCircle, MessageCircle, ImageIcon, MapPin, LayoutGrid, Mars, Venus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { InstagramLoading } from "./instagram-loading"
 import { ProfileConfirmation } from "./profile-confirmation"
@@ -28,7 +28,9 @@ interface PreviousSearch {
 export function HeroSection() {
   const [username, setUsername] = useState("")
   const [showOnboarding, setShowOnboarding] = useState(true)
+  const [onboardingStep, setOnboardingStep] = useState(1)
   const [selectedOptions, setSelectedOptions] = useState<number[]>([0, 1, 2, 3])
+  const [selectedGender, setSelectedGender] = useState<"man" | "woman">("man")
   const [showInput, setShowInput] = useState(false)
   const [showSearching, setShowSearching] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
@@ -399,68 +401,159 @@ export function HeroSection() {
 
             {/* Step indicator */}
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-gray-400 tracking-wide">STEP 1 OF 3</span>
+              <span className="text-xs font-semibold text-gray-400 tracking-wide">
+                STEP {onboardingStep} OF 3
+              </span>
               <span className="text-xs font-semibold text-gray-400 tracking-wide">PRE-ANALYSIS</span>
             </div>
 
             {/* Progress bar */}
             <div className="w-full h-2 rounded-full bg-zinc-800 mb-8 overflow-hidden">
-              <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-purple-600 to-purple-400" />
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all"
+                style={{ width: `${(onboardingStep / 3) * 100}%` }}
+              />
             </div>
 
-            {/* Heading */}
-            <h1 className="text-3xl md:text-4xl font-bold text-center text-white mb-4 text-balance">
-              What do you want to discover?
-            </h1>
-            <p className="text-gray-400 text-center mb-8 leading-relaxed">
-              The system has everything ready. Choose which areas you want to unlock first in this Instagram analysis.
-            </p>
+            {onboardingStep === 1 && (
+              <>
+                {/* Heading */}
+                <h1 className="text-3xl md:text-4xl font-bold text-center text-white mb-4 text-balance">
+                  What do you want to discover?
+                </h1>
+                <p className="text-gray-400 text-center mb-8 leading-relaxed">
+                  The system has everything ready. Choose which areas you want to unlock first in this Instagram
+                  analysis.
+                </p>
 
-            {/* Option cards */}
-            <div className="flex flex-col gap-4 mb-8">
-              {options.map((option, index) => {
-                const OptionIcon = option.icon
-                const isSelected = selectedOptions.includes(index)
-                return (
+                {/* Option cards */}
+                <div className="flex flex-col gap-4 mb-8">
+                  {options.map((option, index) => {
+                    const OptionIcon = option.icon
+                    const isSelected = selectedOptions.includes(index)
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => toggleOption(index)}
+                        className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border transition-colors ${
+                          isSelected ? "border-purple-500/60 bg-purple-500/10" : "border-zinc-800 bg-zinc-900/40"
+                        }`}
+                      >
+                        <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                          <OptionIcon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-white font-bold leading-snug mb-1">{option.title}</h3>
+                          <p className="text-gray-400 text-sm leading-relaxed">{option.description}</p>
+                        </div>
+                        <div
+                          className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center border ${
+                            isSelected ? "bg-purple-500 border-purple-500" : "border-zinc-600"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-4 h-4 text-white" />}
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Continue button */}
+                <Button
+                  onClick={() => setOnboardingStep(2)}
+                  className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
+                >
+                  Continue
+                </Button>
+              </>
+            )}
+
+            {onboardingStep === 2 && (
+              <>
+                {/* Heading */}
+                <h1 className="text-3xl md:text-4xl font-bold text-center text-white mb-4 text-balance">
+                  Who do you want to analyze?
+                </h1>
+                <p className="text-gray-400 text-center mb-8 leading-relaxed">
+                  This helps personalize the verification sequence and the type of alert shown in the report.
+                </p>
+
+                {/* Gender cards */}
+                <div className="flex flex-col gap-4 mb-8">
                   <button
-                    key={index}
                     type="button"
-                    onClick={() => toggleOption(index)}
+                    onClick={() => setSelectedGender("man")}
                     className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border transition-colors ${
-                      isSelected
+                      selectedGender === "man"
                         ? "border-purple-500/60 bg-purple-500/10"
                         : "border-zinc-800 bg-zinc-900/40"
                     }`}
                   >
-                    <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                      <OptionIcon className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-white font-bold leading-snug mb-1">{option.title}</h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">{option.description}</p>
-                    </div>
                     <div
-                      className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center border ${
-                        isSelected ? "bg-purple-500 border-purple-500" : "border-zinc-600"
+                      className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center ${
+                        selectedGender === "man"
+                          ? "bg-gradient-to-br from-purple-500 to-pink-500"
+                          : "bg-zinc-800"
                       }`}
                     >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
+                      <Mars className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-bold leading-snug mb-1">Man</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed">
+                        Messages, media and locations filtered for male profiles.
+                      </p>
                     </div>
                   </button>
-                )
-              })}
-            </div>
 
-            {/* Continue button */}
-            <Button
-              onClick={() => {
-                setShowOnboarding(false)
-                setShowInput(true)
-              }}
-              className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
-            >
-              Continue
-            </Button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGender("woman")}
+                    className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border transition-colors ${
+                      selectedGender === "woman"
+                        ? "border-purple-500/60 bg-purple-500/10"
+                        : "border-zinc-800 bg-zinc-900/40"
+                    }`}
+                  >
+                    <div
+                      className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center ${
+                        selectedGender === "woman"
+                          ? "bg-gradient-to-br from-purple-500 to-pink-500"
+                          : "bg-zinc-800"
+                      }`}
+                    >
+                      <Venus className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-bold leading-snug mb-1">Woman</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed">
+                        Flow adjusted for female profiles and associated interactions.
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Back + Continue buttons */}
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => setOnboardingStep(1)}
+                    className="h-14 px-6 bg-zinc-800 hover:bg-zinc-700 text-white text-lg font-semibold rounded-2xl"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowOnboarding(false)
+                      setShowInput(true)
+                    }}
+                    className="flex-1 h-14 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
