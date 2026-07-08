@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Eye, Lock, Key, Check, AlertCircle } from "lucide-react"
+import { Eye, Lock, Key, Check, AlertCircle, MessageCircle, ImageIcon, MapPin, LayoutGrid } from "lucide-react"
 import { useState, useEffect } from "react"
 import { InstagramLoading } from "./instagram-loading"
 import { ProfileConfirmation } from "./profile-confirmation"
@@ -27,6 +27,8 @@ interface PreviousSearch {
 
 export function HeroSection() {
   const [username, setUsername] = useState("")
+  const [showOnboarding, setShowOnboarding] = useState(true)
+  const [selectedOptions, setSelectedOptions] = useState<number[]>([0, 1, 2, 3])
   const [showInput, setShowInput] = useState(false)
   const [showSearching, setShowSearching] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
@@ -348,6 +350,121 @@ export function HeroSection() {
 
   if (showLoading) {
     return <InstagramLoading username={username} onConfirm={handleLoadingConfirm} />
+  }
+
+  if (showOnboarding) {
+    const options = [
+      {
+        icon: MessageCircle,
+        title: "Deleted messages and Instagram DMs",
+        description: "Hidden conversations, removed messages and suspicious signals.",
+      },
+      {
+        icon: ImageIcon,
+        title: "Private photos and videos",
+        description: "Sensitive media detected in recent exchanges.",
+      },
+      {
+        icon: MapPin,
+        title: "Suspicious locations",
+        description: "Check-ins and movements that deserve attention.",
+      },
+      {
+        icon: LayoutGrid,
+        title: "Feed, Stories and interactions",
+        description: "Hidden stories, likes and profile behavior.",
+      },
+    ]
+
+    const toggleOption = (index: number) => {
+      setSelectedOptions((prev) =>
+        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+      )
+    }
+
+    return (
+      <section className="relative min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="max-w-xl w-full">
+          <div className="bg-zinc-900/60 backdrop-blur-sm border border-white/10 rounded-3xl p-6 md:p-8">
+            {/* Logo */}
+            <div className="flex flex-col items-center mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center border-2 border-purple-400 mb-3">
+                <Eye className="w-7 h-7 text-white" />
+              </div>
+              <div className="text-sm font-bold tracking-wide">
+                <span className="text-white">INSTACHECK</span>
+                <span className="text-purple-500">.AI</span>
+              </div>
+            </div>
+
+            {/* Step indicator */}
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold text-gray-400 tracking-wide">STEP 1 OF 3</span>
+              <span className="text-xs font-semibold text-gray-400 tracking-wide">PRE-ANALYSIS</span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full h-2 rounded-full bg-zinc-800 mb-8 overflow-hidden">
+              <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-purple-600 to-purple-400" />
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-3xl md:text-4xl font-bold text-center text-white mb-4 text-balance">
+              What do you want to discover?
+            </h1>
+            <p className="text-gray-400 text-center mb-8 leading-relaxed">
+              The system has everything ready. Choose which areas you want to unlock first in this Instagram analysis.
+            </p>
+
+            {/* Option cards */}
+            <div className="flex flex-col gap-4 mb-8">
+              {options.map((option, index) => {
+                const OptionIcon = option.icon
+                const isSelected = selectedOptions.includes(index)
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => toggleOption(index)}
+                    className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border transition-colors ${
+                      isSelected
+                        ? "border-purple-500/60 bg-purple-500/10"
+                        : "border-zinc-800 bg-zinc-900/40"
+                    }`}
+                  >
+                    <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <OptionIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-bold leading-snug mb-1">{option.title}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed">{option.description}</p>
+                    </div>
+                    <div
+                      className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center border ${
+                        isSelected ? "bg-purple-500 border-purple-500" : "border-zinc-600"
+                      }`}
+                    >
+                      {isSelected && <Check className="w-4 h-4 text-white" />}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Continue button */}
+            <Button
+              onClick={() => {
+                setShowOnboarding(false)
+                setShowInput(true)
+              }}
+              className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-2xl flex items-center justify-center gap-2"
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
