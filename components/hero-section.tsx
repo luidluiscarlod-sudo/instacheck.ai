@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Eye, Lock, Key, Check, AlertCircle, MessageCircle, ImageIcon, MapPin, LayoutGrid, Mars, Venus } from "lucide-react"
+import { Eye, Lock, Key, Check, AlertCircle, MessageCircle, ImageIcon, MapPin, LayoutGrid } from "lucide-react"
 import { useState, useEffect } from "react"
 import { InstagramLoading } from "./instagram-loading"
 import { ProfileConfirmation } from "./profile-confirmation"
@@ -497,7 +497,7 @@ export function HeroSection() {
                           : "bg-zinc-800"
                       }`}
                     >
-                      <Mars className="w-5 h-5 text-white" />
+                      <span className="text-lg font-bold text-white leading-none">♂</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-white font-bold leading-snug mb-1">Man</h3>
@@ -523,7 +523,7 @@ export function HeroSection() {
                           : "bg-zinc-800"
                       }`}
                     >
-                      <Venus className="w-5 h-5 text-white" />
+                      <span className="text-lg font-bold text-white leading-none">♀</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-white font-bold leading-snug mb-1">Woman</h3>
